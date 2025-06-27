@@ -11,7 +11,6 @@ export async function getCabin(id) {
 
   // For testing
   // await new Promise((res) => setTimeout(res, 1000));
-
   if (error) {
     console.error(error);
     notFound();

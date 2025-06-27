@@ -50,4 +50,4 @@ function Cabin({cabin}) {
     )
 }
 
-export default Cabin
+export default Cabin;

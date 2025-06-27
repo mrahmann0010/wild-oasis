@@ -13,6 +13,8 @@ export async function updateGuestProfile(formData) {
 
     const nationalID = formData.get('nationalID');
     const [nationality, countryFlag] = formData.get('nationality').split('%');
+
+    // These code is used to generate Regex signature - For validating national ID's
     const nationalIDRegex = /^[a-zA-Z0-9]{6,12}$/;
 
     // if(!nationalIDRegex.test(nationalID)) 
