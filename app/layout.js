@@ -33,7 +33,9 @@ export default function RootLayout({children}){
        </div>
         
 
-        <footer>@copyright Romel</footer>
+        <footer className="flex justify-center py-6">
+          <div>Copyrights 2024 @Romel</div>
+        </footer>
       </body>
     </html>
   )
