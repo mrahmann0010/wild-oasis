@@ -1,10 +1,18 @@
 import Spinner from "@/app/_components/Spinner";
 
-export default function Loading(){
-    return (
-        <div className="grid items-center justify-center">
-            <p>Loading cabin data...</p>
-            <Spinner />
-        </div>
-    );
-} 
+export default function Loading() {
+  return (
+    <div
+      style={{
+        minHeight: "calc(100vh - 72px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
+      <Spinner />
+    </div>
+  );
+}

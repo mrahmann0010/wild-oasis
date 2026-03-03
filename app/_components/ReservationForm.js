@@ -1,70 +1,277 @@
-"use client"
+"use client";
 
+import { differenceInCalendarDays } from "date-fns";
 import { useReservation } from "./ReservationContext";
+import SpinnerMini from "./SpinnerMini";
+import { createBooking } from "../_lib/actions";
 
-function ReservationForm({cabin, user}) {
-  // CHANGE
-  const {maxCapacity} = cabin ;
-  const {range} = useReservation();
+function ReservationForm({ cabin, user }) {
+  const { maxCapacity, regularPrice, discount, id: cabinId } = cabin;
+  const { range, resetRange } = useReservation();
+
+  const numNights =
+    range.from && range.to ? differenceInCalendarDays(range.to, range.from) : 0;
+  const totalPrice = numNights * (regularPrice - discount);
+
+  const createBookingWithData = createBooking
+    ? createBooking.bind(null, {
+        startDate: range.from,
+        endDate: range.to,
+        numNights,
+        cabinPrice: regularPrice - discount,
+        cabinId,
+      })
+    : null;
 
   return (
-    <div className='scale-[1.01]'>
-      <div className='bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center'>
-        <p>Logged in as</p>
-
-        <div className='flex gap-4 items-center'>
+    <div
+      style={{
+        background: "var(--moss)",
+        border: "1px solid var(--border)",
+        borderRadius: "4px",
+        overflow: "hidden",
+      }}
+    >
+      {/* Logged-in user strip */}
+      <div
+        style={{
+          background: "var(--deep)",
+          borderBottom: "1px solid var(--border)",
+          padding: "10px 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: "10px",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            color: "var(--stone)",
+          }}
+        >
+          Logged in as
+        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <img
-            // Important to display google profile images
-            referrerPolicy='no-referrer'
-            className='h-8 rounded-full'
+            referrerPolicy="no-referrer"
+            style={{
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              border: "1px solid var(--gold)",
+              objectFit: "cover",
+            }}
             src={user.image}
             alt={user.name}
           />
-          <p>{user.name}</p>
+          <span
+            style={{
+              fontFamily: "'Jost', sans-serif",
+              fontSize: "13px",
+              color: "var(--birch)",
+            }}
+          >
+            {user.name}
+          </span>
         </div>
       </div>
 
-      <form className='bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col'>
-        <div className='space-y-2'>
-          <label htmlFor='numGuests'>How many guests?</label>
-          <select
-            name='numGuests'
-            id='numGuests'
-            className='px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm'
-            required
+      <form
+        action={createBookingWithData}
+        style={{
+          padding: "28px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+        }}
+      >
+        {/* Guest count */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <label
+            htmlFor="numGuests"
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: "10px",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              color: "var(--stone)",
+            }}
           >
-            <option value='' key=''>
+            Number of guests
+          </label>
+          <select
+            name="numGuests"
+            id="numGuests"
+            className="input-dark"
+            required
+            style={{
+              background: "var(--deep)",
+              color: "var(--birch)",
+              border: "1px solid var(--border)",
+              borderRadius: "2px",
+              padding: "10px 14px",
+              fontFamily: "'Jost', sans-serif",
+              fontSize: "14px",
+              width: "100%",
+              outline: "none",
+            }}
+          >
+            <option value="" style={{ background: "var(--deep)" }}>
               Select number of guests...
             </option>
             {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
-              <option value={x} key={x}>
-                {x} {x === 1 ? 'guest' : 'guests'}
+              <option value={x} key={x} style={{ background: "var(--deep)" }}>
+                {x} {x === 1 ? "guest" : "guests"}
               </option>
             ))}
           </select>
         </div>
 
-        <div className='space-y-2'>
-          <label htmlFor='observations'>
-            Anything we should know about your stay?
+        {/* Observations */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <label
+            htmlFor="observations"
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: "10px",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              color: "var(--stone)",
+            }}
+          >
+            Special requests
           </label>
           <textarea
-            name='observations'
-            id='observations'
-            className='px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm'
-            placeholder='Any pets, allergies, special requirements, etc.?'
+            name="observations"
+            id="observations"
+            rows={3}
+            placeholder="Pets, allergies, special requirements..."
+            style={{
+              background: "var(--deep)",
+              color: "var(--birch)",
+              border: "1px solid var(--border)",
+              borderRadius: "2px",
+              padding: "10px 14px",
+              fontFamily: "'Jost', sans-serif",
+              fontSize: "14px",
+              width: "100%",
+              outline: "none",
+              resize: "vertical",
+            }}
           />
         </div>
 
-        <div className='flex justify-end items-center gap-6'>
-          <p className='text-primary-300 text-base'>Start by selecting dates</p>
+        {/* Price summary */}
+        {numNights > 0 && (
+          <div
+            style={{
+              background: "var(--deep)",
+              border: "1px solid var(--border)",
+              borderRadius: "2px",
+              padding: "16px 18px",
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: "12px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                color: "var(--stone)",
+                marginBottom: "6px",
+              }}
+            >
+              <span>
+                ${regularPrice - discount} &times; {numNights} nights
+              </span>
+              <span>${totalPrice}</span>
+            </div>
+            {discount > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  color: "var(--stone)",
+                  marginBottom: "6px",
+                }}
+              >
+                <span>Discount applied</span>
+                <span style={{ color: "var(--gold)" }}>
+                  -${discount * numNights}
+                </span>
+              </div>
+            )}
+            <div
+              style={{
+                height: "1px",
+                background: "var(--border)",
+                margin: "10px 0",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                color: "var(--gold)",
+                fontWeight: 500,
+                fontSize: "15px",
+              }}
+            >
+              <span>Total</span>
+              <span>${totalPrice}</span>
+            </div>
+          </div>
+        )}
 
-          <button className='bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300'>
-            Reserve now
-          </button>
-        </div>
+        {/* Submit */}
+        <SubmitButton numNights={numNights} />
       </form>
     </div>
+  );
+}
+
+function SubmitButton({ numNights }) {
+  // We import useFormStatus dynamically here to keep this file a client component
+  const { useFormStatus } = require("react-dom");
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending || numNights === 0}
+      style={{
+        width: "100%",
+        padding: "14px",
+        background: pending || numNights === 0 ? "var(--pine)" : "var(--gold)",
+        color: pending || numNights === 0 ? "var(--stone)" : "var(--void)",
+        fontFamily: "'Jost', sans-serif",
+        fontWeight: 500,
+        fontSize: "12px",
+        textTransform: "uppercase",
+        letterSpacing: "0.15em",
+        borderRadius: "2px",
+        border: "none",
+        cursor: pending || numNights === 0 ? "not-allowed" : "pointer",
+        transition: "background 200ms ease, color 200ms ease",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
+      }}
+    >
+      {pending ? (
+        <>
+          <SpinnerMini /> Reserving...
+        </>
+      ) : numNights === 0 ? (
+        "Select dates to reserve"
+      ) : (
+        "Reserve now"
+      )}
+    </button>
   );
 }
 

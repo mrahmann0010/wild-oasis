@@ -3,54 +3,55 @@ import { auth } from "../_lib/auth";
 
 export default async function Navigation() {
   const session = await auth();
-  console.log(session);
+
   return (
-    <nav className="z-10 text-xl">
-      <ul className="flex gap-16 items-center">
+    <nav>
+      <ul
+        style={{
+          display: "flex",
+          gap: "36px",
+          alignItems: "center",
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+        }}
+      >
         <li>
-          <Link
-            href="/cabins"
-            className="hover:text-accent-400 transition-colors"
-          >
+          <Link href="/cabins" className="nav-link">
             Cabins
           </Link>
         </li>
         <li>
-          <Link
-            href="/about"
-            className="hover:text-accent-400 transition-colors"
-          >
+          <Link href="/about" className="nav-link">
             About
           </Link>
         </li>
         <li>
-          {session?.user?.image? 
-          (<Link
-            href="/account"
-            className="hover:text-accent-400 transition-colors flex items-center gap-4"
-          >
-            <img src={session.user.image} alt="user-image" 
-            className="h-8 rounded-full" referrerPolicy="no-referrer"></img>
-            <span>Guest area</span>
-            
-          </Link>)
-          :
+          {session?.user?.image ? (
             <Link
-            href="/login"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Guest area
-          </Link>
-
-        // Change - This was previous Link
-        //   <Link
-        //   href="/account"
-        //   className="hover:text-accent-400 transition-colors"
-        // >
-        //   Guest area
-        // </Link>
-          
-          }
+              href="/account"
+              className="nav-link"
+              style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            >
+              <img
+                src={session.user.image}
+                alt="user-image"
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  border: "1px solid var(--gold)",
+                  objectFit: "cover",
+                }}
+                referrerPolicy="no-referrer"
+              />
+              <span>Account</span>
+            </Link>
+          ) : (
+            <Link href="/login" className="nav-link">
+              Account
+            </Link>
+          )}
         </li>
       </ul>
     </nav>

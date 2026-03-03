@@ -1,26 +1,75 @@
-"use client"
+"use client";
 
-import { XMarkIcon } from '@heroicons/react/24/solid';
-import { format } from 'date-fns';
-import { useReservation } from './ReservationContext';
+import { format } from "date-fns";
+import { useReservation } from "./ReservationContext";
 
 function ReservationReminder() {
-  
-    const {range, resetRange} = useReservation();
+  const { range, resetRange } = useReservation();
 
   if (!range.from || !range.to) return null;
 
   return (
-    <div className='fixed bottom-6 left-1/2 -translate-x-1/2 py-5 px-8 rounded-full bg-accent-500 text-primary-800 text  font-semibold shadow-xl shadow-slate-900 flex gap-8 items-center'>
-      <p>
-        <span>👋</span> Don&apos;t forget to reserve your dates <br /> from{' '}
-        {format(new Date(range.from), 'MMM dd yyyy')} to{' '}
-        {format(new Date(range.to), 'MMM dd yyyy')}
-      </p>
-      <button className='rounded-full p-1 hover:bg-accent-600 transition-all'
-        onClick={resetRange}>
-        <XMarkIcon className='h-5 w-5' />
+    <div
+      className="slide-in-right"
+      style={{
+        position: "fixed",
+        bottom: "28px",
+        right: "28px",
+        zIndex: 100,
+        background: "var(--deep)",
+        borderLeft: "3px solid var(--gold)",
+        border: "1px solid var(--border)",
+        borderLeftWidth: "3px",
+        borderLeftColor: "var(--gold)",
+        borderRadius: "4px",
+        padding: "16px 20px",
+        boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
+        maxWidth: "320px",
+        width: "100%",
+      }}
+    >
+      <button
+        onClick={resetRange}
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "12px",
+          background: "transparent",
+          border: "none",
+          color: "var(--stone)",
+          cursor: "pointer",
+          padding: "2px",
+          lineHeight: 1,
+          fontSize: "16px",
+        }}
+        aria-label="Dismiss"
+      >
+        &times;
       </button>
+
+      <p
+        style={{
+          fontFamily: "'Jost', sans-serif",
+          fontSize: "13px",
+          fontWeight: 400,
+          color: "var(--birch)",
+          marginBottom: "6px",
+          paddingRight: "16px",
+        }}
+      >
+        Don&apos;t forget to complete your reservation!
+      </p>
+      <p
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: "11px",
+          color: "var(--stone)",
+          letterSpacing: "0.04em",
+        }}
+      >
+        {format(new Date(range.from), "MMM dd")} &rarr;{" "}
+        {format(new Date(range.to), "MMM dd, yyyy")}
+      </p>
     </div>
   );
 }
