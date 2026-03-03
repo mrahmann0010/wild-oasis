@@ -1,45 +1,71 @@
 import Reservation from "@/app/_components/Reservation";
 import Spinner from "@/app/_components/Spinner";
-import TextExpander from "@/app/_components/TextExpander";
 import { getCabin, getCabins } from "@/app/_lib/data-service";
-
 import { Suspense } from "react";
 import Cabin from "@/app/_components/Cabin";
 
 export const revalidate = 5;
 
-export async function generateStaticParams(){
+export async function generateStaticParams() {
   const cabins = await getCabins();
-  const ids = cabins.map(cabin=>({cabinId:String(cabin.id)}));
-  
-  return ids;
+  return cabins.map((cabin) => ({ cabinId: String(cabin.id) }));
 }
 
-export async function generateMetadata({params}){
+export async function generateMetadata({ params }) {
   const { name } = await getCabin(params.cabinId);
-  
-  return {title: `Cabin ${name}`};
-
+  return { title: `Cabin ${name}` };
 }
 
-export default async function Page({params}) {
-    const cabin = await getCabin(params.cabinId);
+export default async function Page({ params }) {
+  const cabin = await getCabin(params.cabinId);
 
   return (
-    <div className="max-w-6xl mx-auto mt-8">
-      
-      <Cabin cabin={cabin}/>
+    <div style={{ paddingBottom: "80px" }}>
+      <Cabin cabin={cabin} />
 
-      <div>
-        <h2 className="text-5xl font-semibold text-center">
-        Reserve today {cabin.name}. Pay on arrival.
-        </h2>
+      {/* Reserve section */}
+      <div style={{ marginTop: "72px" }}>
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <p
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: "10px",
+              textTransform: "uppercase",
+              letterSpacing: "0.35em",
+              color: "var(--gold)",
+              marginBottom: "12px",
+            }}
+          >
+            Availability &amp; Pricing
+          </p>
+          <h2
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: "clamp(28px, 4vw, 44px)",
+              fontWeight: 600,
+              fontStyle: "italic",
+              color: "var(--birch)",
+              marginBottom: "8px",
+            }}
+          >
+            Reserve {cabin.name} today
+          </h2>
+          <p
+            style={{
+              fontFamily: "'Jost', sans-serif",
+              fontWeight: 300,
+              fontSize: "14px",
+              color: "var(--stone)",
+              letterSpacing: "0.03em",
+            }}
+          >
+            No payment required &mdash; pay on arrival
+          </p>
+        </div>
 
         <Suspense fallback={<Spinner />}>
-          <Reservation cabin={cabin}/>
+          <Reservation cabin={cabin} />
         </Suspense>
-        
-        
       </div>
     </div>
   );

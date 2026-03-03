@@ -1,17 +1,433 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Jost:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ─────────────────────────────── */
+:root {
+  --void: #0d0f0b;
+  --deep: #141810;
+  --moss: #1e2419;
+  --pine: #2d3d28;
+  --gold: #c9a84c;
+  --gold-muted: #8a6e32;
+  --stone: #a09070;
+  --birch: #e8e0d0;
+  --fog: #f5f2ec;
+  --rust: #7a3d2a;
+  --border: rgba(201, 168, 76, 0.15);
+  --header-h: 72px;
+}
+
+/* ─── Base ───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--void);
+  color: var(--birch);
+  font-family: "Jost", system-ui, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ─── Typography ─────────────────────────────────── */
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  line-height: 1.1;
+}
+
+.mono,
+time,
+.price,
+code,
+.font-mono {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+/* ─── Selection ──────────────────────────────────── */
+::selection {
+  background-color: rgba(201, 168, 76, 0.3);
+  color: var(--void);
+}
+
+/* ─── Focus ──────────────────────────────────────── */
+:focus-visible {
+  outline: 1.5px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ─── Links ──────────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--pine);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-muted);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ─── Keyframes ──────────────────────────────────── */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slowZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseDown {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+}
+
+/* ─── SVG Noise Grain ────────────────────────────── */
+.noise-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── Spinners ───────────────────────────────────── */
 .spinner {
-    border: 4px solid #f3f3f3; /* Light gray background */
-    border-top: 4px solid #3498db; /* Blue spinner color */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(201, 168, 76, 0.15);
+  border-top: 2px solid var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.spinner-mini {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(201, 168, 76, 0.15);
+  border-top: 1.5px solid var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ─── Fade-up utility ────────────────────────────── */
+.fade-up {
+  animation: fadeUp 500ms ease-out both;
+}
+.fade-up-1 {
+  animation: fadeUp 500ms 100ms ease-out both;
+}
+.fade-up-2 {
+  animation: fadeUp 500ms 200ms ease-out both;
+}
+.fade-up-3 {
+  animation: fadeUp 500ms 300ms ease-out both;
+}
+.fade-up-4 {
+  animation: fadeUp 500ms 400ms ease-out both;
+}
+.fade-up-5 {
+  animation: fadeUp 500ms 500ms ease-out both;
+}
+
+/* ─── Cabin card stagger ─────────────────────────── */
+.cabin-card {
+  animation: fadeUp 500ms ease-out both;
+}
+.cabin-card:nth-child(1) {
+  animation-delay: 0ms;
+}
+.cabin-card:nth-child(2) {
+  animation-delay: 80ms;
+}
+.cabin-card:nth-child(3) {
+  animation-delay: 160ms;
+}
+.cabin-card:nth-child(4) {
+  animation-delay: 240ms;
+}
+.cabin-card:nth-child(5) {
+  animation-delay: 320ms;
+}
+.cabin-card:nth-child(6) {
+  animation-delay: 400ms;
+}
+.cabin-card:nth-child(7) {
+  animation-delay: 480ms;
+}
+.cabin-card:nth-child(8) {
+  animation-delay: 560ms;
+}
+
+/* ─── Navigation link ────────────────────────────── */
+.nav-link {
+  position: relative;
+  color: var(--stone);
+  font-family: "Jost", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  transition: color 200ms ease;
+  padding-bottom: 2px;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 250ms ease-out;
+}
+.nav-link:hover,
+.nav-link.active {
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ─── Button variants ────────────────────────────── */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--void);
+  font-family: "Jost", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 12px 28px;
+  border-radius: 2px;
+  border: 1px solid var(--gold);
+  transition:
+    background 200ms ease,
+    border-color 200ms ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-gold:hover {
+  background: var(--gold-muted);
+  border-color: var(--gold-muted);
+  color: var(--void);
+  text-decoration: none;
+}
+.btn-gold:active {
+  transform: scale(0.98);
+}
+
+.btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--gold);
+  font-family: "Jost", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 24px;
+  border-radius: 2px;
+  border: 1px solid var(--gold);
+  transition:
+    background 200ms ease,
+    color 200ms ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-outlined:hover {
+  background: var(--gold);
+  color: var(--void);
+  text-decoration: none;
+}
+.btn-outlined:active {
+  transform: scale(0.98);
+}
+
+/* ─── Dark input ─────────────────────────────────── */
+.input-dark {
+  width: 100%;
+  background: var(--deep);
+  color: var(--birch);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-family: "Jost", sans-serif;
+  font-size: 15px;
+  transition: border-color 200ms ease;
+  outline: none;
+}
+.input-dark:focus {
+  border-color: var(--gold);
+}
+.input-dark:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Slow zoom on hero image ────────────────────── */
+.slow-zoom {
+  animation: slowZoom 10s ease-out forwards;
+}
+
+/* ─── Reservation reminder slide ────────────────── */
+.slide-in-right {
+  animation: slideInRight 400ms ease-out both;
+}
+
+/* ─── react-day-picker theme ─────────────────────── */
+.rdp {
+  --rdp-cell-size: 38px;
+  --rdp-accent-color: var(--gold);
+  --rdp-background-color: var(--pine);
+  color: var(--birch);
+  margin: 0;
+}
+.rdp-months {
+  background: var(--moss);
+  padding: 16px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.rdp-table {
+  background: var(--moss);
+}
+.rdp-day {
+  font-family: "Jost", sans-serif;
+  font-size: 13px;
+  border-radius: 2px !important;
+}
+.rdp-day:hover:not([aria-selected]):not([disabled]) {
+  background-color: var(--pine) !important;
+  color: var(--birch) !important;
+}
+.rdp-day_selected:not(.rdp-day_range_middle) {
+  background-color: var(--gold) !important;
+  color: var(--void) !important;
+  font-weight: 600;
+}
+.rdp-day_range_middle {
+  background-color: var(--pine) !important;
+  color: var(--birch) !important;
+  border-radius: 0 !important;
+}
+.rdp-day_disabled {
+  opacity: 0.3;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  color: var(--rust) !important;
+}
+.rdp-caption_label {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--birch);
+}
+.rdp-nav_button {
+  color: var(--gold) !important;
+  border-radius: 2px !important;
+}
+.rdp-head_cell {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--stone);
+}
+.rdp-dropdown {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  background: var(--moss);
+  color: var(--birch);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.rdp-button:focus-visible {
+  box-shadow: 0 0 0 2px var(--gold) !important;
+}
