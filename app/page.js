@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import bg from "@/public/bg.png";
+import GuestReviews from "./_components/GuestReviews";
+import WhyWildOasis from "./_components/WhyWildOasis";
+import NewsletterForm from "./_components/NewsletterForm";
+import { FAQAccordion } from "./_components/FAQItem";
 
 export default function Page() {
   return (
@@ -318,6 +322,105 @@ export default function Page() {
           </Link>
         </div>
       </section>
+
+      {/* ─── WHY WILD OASIS ─────────────────────────── */}
+      <WhyWildOasis />
+
+      {/* ─── GUEST REVIEWS ──────────────────────────── */}
+      <GuestReviews />
+
+      {/* ─── FAQ PREVIEW ────────────────────────────── */}
+      <section style={{ padding: "100px 0 80px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "60% 40%",
+            gap: "64px",
+            alignItems: "start",
+          }}
+        >
+          {/* FAQ accordion left */}
+          <div>
+            <p
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: "11px",
+                textTransform: "uppercase",
+                letterSpacing: "0.4em",
+                color: "var(--gold)",
+                marginBottom: "16px",
+              }}
+            >
+              Common Questions
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: "clamp(36px, 4vw, 48px)",
+                fontWeight: 600,
+                fontStyle: "italic",
+                color: "var(--birch)",
+                margin: "0 0 40px",
+                lineHeight: 1.1,
+              }}
+            >
+              Answers, simply put.
+            </h2>
+            <FAQAccordion limit={5} />
+            <div style={{ marginTop: "28px" }}>
+              <Link
+                href="/faq"
+                style={{
+                  fontFamily: "'Jost', sans-serif",
+                  fontWeight: 400,
+                  fontSize: "13px",
+                  color: "var(--gold)",
+                  textDecoration: "none",
+                  borderBottom: "1px solid rgba(201,168,76,0.3)",
+                  paddingBottom: "2px",
+                  transition: "border-color 200ms ease",
+                }}
+              >
+                View all FAQs &rarr;
+              </Link>
+            </div>
+          </div>
+
+          {/* Atmospheric image right */}
+          <div
+            style={{
+              position: "relative",
+              aspectRatio: "3/4",
+              overflow: "hidden",
+              borderRadius: "2px",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80"
+              alt="Forest"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                filter: "brightness(0.5)",
+                display: "block",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to top, rgba(13,15,11,0.6) 0%, transparent 60%)",
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── NEWSLETTER ─────────────────────────────── */}
+      <NewsletterForm />
     </>
   );
 }
