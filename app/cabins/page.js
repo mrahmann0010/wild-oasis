@@ -3,6 +3,7 @@ import CabinList from "../_components/CabinList";
 import Spinner from "../_components/Spinner";
 import Filter from "../_components/Filter";
 import ReservationReminder from "../_components/ReservationReminder";
+import CompareBar from "../_components/CompareBar";
 
 export const revalidate = 0;
 
@@ -135,6 +136,7 @@ export default function Page({ searchParams }) {
           </p>
         </div>
       </div>
+      <CompareBar />
     </div>
   );
 }

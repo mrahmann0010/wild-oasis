@@ -27,6 +27,16 @@ export default async function Navigation() {
           </Link>
         </li>
         <li>
+          <Link href="/seasons" className="nav-link">
+            Seasons
+          </Link>
+        </li>
+        <li>
+          <Link href="/faq" className="nav-link">
+            FAQ
+          </Link>
+        </li>
+        <li>
           {session?.user?.image ? (
             <Link
               href="/account"

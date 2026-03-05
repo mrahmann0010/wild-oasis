@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
           style={{
             background: "var(--deep)",
             borderTop: "1px solid var(--border)",
-            padding: "40px 32px",
+            padding: "64px 32px 32px",
             marginTop: "80px",
           }}
         >
@@ -56,51 +56,200 @@ export default function RootLayout({ children }) {
             style={{
               maxWidth: "1280px",
               margin: "0 auto",
-              display: "grid",
-              gridTemplateColumns: "1fr auto 1fr",
-              alignItems: "center",
-              gap: "32px",
             }}
           >
-            <Logo />
+            {/* Top row: logo + link columns */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1.5fr 1fr 1fr 1fr",
+                gap: "48px",
+                marginBottom: "56px",
+              }}
+            >
+              {/* Brand */}
+              <div>
+                <Logo />
+                <p
+                  style={{
+                    fontFamily: "'Jost', sans-serif",
+                    fontWeight: 300,
+                    fontSize: "13px",
+                    color: "var(--stone)",
+                    lineHeight: 1.7,
+                    marginTop: "20px",
+                    maxWidth: "260px",
+                  }}
+                >
+                  Hand-picked luxury cabins in the most breathtaking corners of
+                  nature.
+                </p>
+              </div>
 
-            <nav>
-              <ul
-                style={{
-                  display: "flex",
-                  gap: "28px",
-                  listStyle: "none",
-                  margin: 0,
-                  padding: 0,
-                }}
-              >
-                {["Cabins", "About", "Account"].map((label) => (
-                  <li key={label}>
-                    <Link
-                      href={`/${label.toLowerCase()}`}
-                      style={{
-                        fontFamily: "'Jost', sans-serif",
-                        fontWeight: 300,
-                        fontSize: "13px",
-                        color: "var(--stone)",
-                        textDecoration: "none",
-                        transition: "color 200ms ease",
-                      }}
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+              {/* Explore */}
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: "9px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    color: "var(--gold-muted)",
+                    marginBottom: "16px",
+                  }}
+                >
+                  Explore
+                </p>
+                <ul
+                  style={{
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  {[
+                    { label: "Cabins", href: "/cabins" },
+                    { label: "About", href: "/about" },
+                    { label: "Seasonal Rates", href: "/seasons" },
+                  ].map(({ label, href }) => (
+                    <li key={label}>
+                      <Link
+                        href={href}
+                        style={{
+                          fontFamily: "'Jost', sans-serif",
+                          fontWeight: 300,
+                          fontSize: "13px",
+                          color: "var(--stone)",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            <div style={{ textAlign: "right" }}>
+              {/* Support */}
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: "9px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    color: "var(--gold-muted)",
+                    marginBottom: "16px",
+                  }}
+                >
+                  Support
+                </p>
+                <ul
+                  style={{
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  {[
+                    { label: "FAQ", href: "/faq" },
+                    { label: "Contact Us", href: "/contact" },
+                  ].map(({ label, href }) => (
+                    <li key={label}>
+                      <Link
+                        href={href}
+                        style={{
+                          fontFamily: "'Jost', sans-serif",
+                          fontWeight: 300,
+                          fontSize: "13px",
+                          color: "var(--stone)",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Account */}
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: "9px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    color: "var(--gold-muted)",
+                    marginBottom: "16px",
+                  }}
+                >
+                  Account
+                </p>
+                <ul
+                  style={{
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                  }}
+                >
+                  {[
+                    { label: "My Reservations", href: "/account/reservations" },
+                    { label: "Wishlist", href: "/account/wishlist" },
+                    { label: "Guest Profile", href: "/account/profile" },
+                  ].map(({ label, href }) => (
+                    <li key={label}>
+                      <Link
+                        href={href}
+                        style={{
+                          fontFamily: "'Jost', sans-serif",
+                          fontWeight: 300,
+                          fontSize: "13px",
+                          color: "var(--stone)",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div
+              style={{
+                height: "1px",
+                background: "var(--border)",
+                marginBottom: "24px",
+              }}
+            />
+
+            {/* Legal row */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <p
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: "11px",
                   color: "var(--stone)",
-                  marginBottom: "6px",
+                  margin: 0,
                 }}
               >
                 &copy; {new Date().getFullYear()} Wild Oasis. All rights
@@ -112,6 +261,7 @@ export default function RootLayout({ children }) {
                   fontSize: "10px",
                   color: "var(--gold-muted)",
                   letterSpacing: "0.04em",
+                  margin: 0,
                 }}
               >
                 Powered by Supabase &bull; Next.js

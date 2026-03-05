@@ -1,13 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import WishlistButton from "./WishlistButton";
 
 function CabinCard({ cabin }) {
   const { id, name, maxCapacity, regularPrice, discount, image } = cabin;
   const discountedPrice = discount > 0 ? regularPrice - discount : null;
   const discountPct =
     discount > 0 ? Math.round((discount / regularPrice) * 100) : 0;
+
+  const [isComparing, setIsComparing] = useState(false);
+
+  function handleAddToCompare() {
+    const key = "wc_compare";
+    const existing = JSON.parse(localStorage.getItem(key) || "[]");
+    if (isComparing) {
+      const updated = existing.filter((c) => c.id !== id);
+      localStorage.setItem(key, JSON.stringify(updated));
+      setIsComparing(false);
+    } else {
+      if (existing.length >= 3) return;
+      const updated = [...existing, { id, name, image }];
+      localStorage.setItem(key, JSON.stringify(updated));
+      setIsComparing(true);
+    }
+    window.dispatchEvent(new Event("wc_compare_change"));
+  }
 
   return (
     <div
@@ -62,6 +82,9 @@ function CabinCard({ cabin }) {
             pointerEvents: "none",
           }}
         />
+
+        {/* Wishlist button — top left */}
+        <WishlistButton cabinId={id} cabinName={name} />
         {/* Cabin name over image */}
         <div
           style={{
@@ -252,6 +275,31 @@ function CabinCard({ cabin }) {
         >
           View Cabin &rarr;
         </Link>
+
+        {/* Compare toggle */}
+        <button
+          onClick={handleAddToCompare}
+          style={{
+            display: "block",
+            width: "100%",
+            textAlign: "center",
+            padding: "8px 0",
+            background: isComparing ? "rgba(201,168,76,0.12)" : "transparent",
+            border: isComparing
+              ? "1px solid var(--gold)"
+              : "1px solid var(--border)",
+            borderRadius: "2px",
+            color: isComparing ? "var(--gold)" : "var(--stone)",
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: "10px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            transition: "all 200ms ease",
+          }}
+        >
+          {isComparing ? "✓ Added" : "+ Compare"}
+        </button>
       </div>
     </div>
   );
