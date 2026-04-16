@@ -1,69 +1,161 @@
-"use client"
+"use client";
 
 import { useFormStatus } from "react-dom";
 import { updateGuestProfile } from "../_lib/actions";
+import SpinnerMini from "./SpinnerMini";
 
-function UpdateProfileForm({guest, children}) {
-  
-  const {fullName, email, nationality, nationalID, countryFlag} = guest;
-    return (
-        <form action={updateGuestProfile} className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
-        <div className="space-y-2">
-          <label>Full name</label>
-          <input
-            defaultValue={fullName}
-            name="fullName"
-            disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
-          />
-        </div>
+const fieldLabel = {
+  fontFamily: "'IBM Plex Mono', monospace",
+  fontSize: "10px",
+  textTransform: "uppercase",
+  letterSpacing: "0.1em",
+  color: "var(--stone)",
+  display: "block",
+  marginBottom: "8px",
+};
 
-        <div className="space-y-2">
-          <label>Email address</label>
-          <input
-            defaultValue={email}
-            name="email"
-            disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
-          />
-        </div>
+const fieldInput = {
+  width: "100%",
+  background: "var(--moss)",
+  color: "var(--birch)",
+  border: "1px solid var(--border)",
+  borderRadius: "2px",
+  padding: "10px 14px",
+  fontFamily: "'Jost', sans-serif",
+  fontSize: "15px",
+  outline: "none",
+  transition: "border-color 200ms ease",
+};
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label htmlFor="nationality">Where are you from?</label>
+const fieldInputDisabled = {
+  ...fieldInput,
+  opacity: 0.38,
+  cursor: "not-allowed",
+};
+
+function UpdateProfileForm({ guest, children }) {
+  const { fullName, email, nationality, nationalID, countryFlag } = guest;
+
+  return (
+    <form
+      action={updateGuestProfile}
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "24px 32px",
+        background: "var(--deep)",
+        border: "1px solid var(--border)",
+        borderRadius: "4px",
+        padding: "36px",
+      }}
+    >
+      {/* Full Name */}
+      <div>
+        <label style={fieldLabel}>Full name</label>
+        <input
+          defaultValue={fullName}
+          name="fullName"
+          disabled
+          style={fieldInputDisabled}
+        />
+      </div>
+
+      {/* Email */}
+      <div>
+        <label style={fieldLabel}>Email address</label>
+        <input
+          defaultValue={email}
+          name="email"
+          disabled
+          style={fieldInputDisabled}
+        />
+      </div>
+
+      {/* Nationality */}
+      <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "8px",
+          }}
+        >
+          <label htmlFor="nationality" style={{ ...fieldLabel, margin: 0 }}>
+            Nationality
+          </label>
+          {countryFlag && (
             <img
               src={countryFlag}
               alt="Country flag"
-              className="h-5 rounded-sm"
+              style={{ height: "18px", borderRadius: "2px" }}
             />
-          </div>
-
-          {children}
+          )}
         </div>
+        {children}
+      </div>
 
-        <div className="space-y-2">
-          <label htmlFor="nationalID">National ID number</label>
-          <input
-            defaultValue={nationalID}
-            name="nationalID"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-          />
-        </div>
+      {/* National ID */}
+      <div>
+        <label htmlFor="nationalID" style={fieldLabel}>
+          National ID number
+        </label>
+        <input
+          defaultValue={nationalID}
+          name="nationalID"
+          id="nationalID"
+          style={fieldInput}
+        />
+      </div>
 
-        <div className="flex justify-end items-center gap-6">
-          <Button />
-        </div>
-      </form>
-    )
+      {/* Save button — spans full width, right-aligned */}
+      <div
+        style={{
+          gridColumn: "1 / -1",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <SaveButton />
+      </div>
+    </form>
+  );
 }
 
-const Button = () => {
-  const {pending} = useFormStatus();
-  return(
-    <button disabled={pending} className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-            { pending? 'Updating Data...' : 'Update profile'}
+function SaveButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      disabled={pending}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "8px",
+        padding: "12px 32px",
+        background: pending ? "var(--pine)" : "var(--gold)",
+        color: pending ? "var(--stone)" : "var(--void)",
+        fontFamily: "'Jost', sans-serif",
+        fontWeight: 500,
+        fontSize: "12px",
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        borderRadius: "2px",
+        border: "none",
+        cursor: pending ? "not-allowed" : "pointer",
+        opacity: pending ? 0.7 : 1,
+        transition: "background 200ms ease",
+      }}
+    >
+      {pending ? (
+        <>
+          <SpinnerMini /> Updating profile...
+        </>
+      ) : (
+        "Update profile"
+      )}
     </button>
-  )
+  );
 }
 
 export default UpdateProfileForm;

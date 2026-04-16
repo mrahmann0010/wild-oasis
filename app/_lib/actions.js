@@ -1,92 +1,116 @@
-"use server"
+"use server";
 
 import { revalidatePath } from "next/cache";
-import { signIn, signOut, auth } from "./auth"
+import { signIn, signOut, auth } from "./auth";
 import { supabase } from "./supabase";
 import { se } from "date-fns/locale";
-import { getBookings } from "./data-service";
+import { getBookings, createBooking as dbCreateBooking } from "./data-service";
 import { redirect } from "next/navigation";
 
 export async function updateGuestProfile(formData) {
-    const session = await auth();
-    if(!session) throw new Error('User is not authorized to perform this action');
+  const session = await auth();
+  if (!session)
+    throw new Error("User is not authorized to perform this action");
 
-    const nationalID = formData.get('nationalID');
-    const [nationality, countryFlag] = formData.get('nationality').split('%');
+  const nationalID = formData.get("nationalID");
+  const [nationality, countryFlag] = formData.get("nationality").split("%");
 
-    // These code is used to generate Regex signature - For validating national ID's
-    const nationalIDRegex = /^[a-zA-Z0-9]{6,12}$/;
+  // These code is used to generate Regex signature - For validating national ID's
+  const nationalIDRegex = /^[a-zA-Z0-9]{6,12}$/;
 
-    // if(!nationalIDRegex.test(nationalID)) 
-    //     throw new Error('Please Provide Valid ID');
-    const updateData = {nationality, nationalID, countryFlag};
-    console.log(session.user.guestId);
-    
-    const { data, error } = await supabase
-        .from('guests')
-        .update(updateData)
-        .eq('id', session.user.guestId);
-    
-      if (error) 
-        throw new Error('Guest could not be updated');
+  // if(!nationalIDRegex.test(nationalID))
+  //     throw new Error('Please Provide Valid ID');
+  const updateData = { nationality, nationalID, countryFlag };
+  console.log(session.user.guestId);
 
-    //   To update the Stale Data - Clearing the Cache
-      revalidatePath('/account/profile');
+  const { data, error } = await supabase
+    .from("guests")
+    .update(updateData)
+    .eq("id", session.user.guestId);
+
+  if (error) throw new Error("Guest could not be updated");
+
+  //   To update the Stale Data - Clearing the Cache
+  revalidatePath("/account/profile");
 }
 
-
 export async function deleteReservation(bookingId) {
-    const session = await auth();
-    if(!session) throw new Error('User is not authorized to perform Delete Operation');
+  const session = await auth();
+  if (!session)
+    throw new Error("User is not authorized to perform Delete Operation");
 
-    const guestBookings = await getBookings(session.user.guestId);
-    const guestBookingIds = guestBookings.map((booking=> booking.id));
-    if(!guestBookingIds.includes(bookingId))
-        throw new Error('You are not allowed to delete this booking');
-    const {error} = await supabase.from('bookings')
-    .delete().eq('id', bookingId);
-    if(error)
-        throw new Error('Deletion Failed');
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+  if (!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to delete this booking");
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", bookingId);
+  if (error) throw new Error("Deletion Failed");
 
-    revalidatePath('/account/reservations');
+  revalidatePath("/account/reservations");
 }
 
 export async function updateReservation(formData) {
-    const session = await auth();
-    if(!session) throw new Error('User is not authorized to perform Update Reservation');
+  const session = await auth();
+  if (!session)
+    throw new Error("User is not authorized to perform Update Reservation");
 
+  const numGuests = Number(formData.get("numGuests"));
+  const observations = formData.get("observations");
+  const updatedData = { numGuests, observations };
+  const reservationId = Number(formData.get("reservationId"));
 
-    const numGuests = Number(formData.get('numGuests'));
-    const observations = formData.get('observations');
-    const updatedData = {numGuests, observations};
-    const reservationId = Number(formData.get('reservationId'));
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
 
-    const guestBookings = await getBookings(session.user.guestId);
-    const guestBookingIds = guestBookings.map((booking)=> booking.id);
-    
+  if (!guestBookingIds.includes(Number(reservationId))) {
+    throw new Error("You are not allowed to Update this booking");
+  }
 
-    if(!guestBookingIds.includes(Number(reservationId))){
-        throw new Error('You are not allowed to Update this booking');
-    }
+  const { error } = await supabase
+    .from("bookings")
+    .update(updatedData)
+    .eq("id", reservationId);
 
-    const {error} = await supabase.from('bookings')
-    .update(updatedData).eq('id', reservationId);
+  if (error) {
+    throw new Error("Guest could not be updated");
+  }
 
-    if(error) {
-        throw new Error('Guest could not be updated');
-    };
+  revalidatePath(`/account/reservations/edit/${reservationId}`);
+  redirect("/account/reservations");
+}
 
-    revalidatePath(`/account/reservations/edit/${reservationId}`);
-    redirect('/account/reservations');
-}   
+// server action to create a new booking using form data + precomputed details
+export async function createBooking(initialData, formData) {
+  const session = await auth();
+  if (!session) throw new Error("User must be logged in to make a reservation");
 
+  const numGuests = Number(formData.get("numGuests"));
+  const observations = formData.get("observations") || "";
 
+  const bookingPayload = {
+    ...initialData,
+    numGuests,
+    observations,
+    guestId: session.user.guestId,
+    created_at: new Date().toISOString(),
+  };
 
+  // delegate to shared data-service helper
+  const data = await dbCreateBooking(bookingPayload);
+
+  // refresh the reservations list after creation
+  revalidatePath("/account/reservations");
+
+  return data;
+}
 
 export async function signInAction() {
-    await signIn('google', {redirectTo:'/account'});
+  await signIn("google", { redirectTo: "/account" });
 }
 
 export async function signOutAction() {
-    await signOut({redirectTo:'/'});
+  await signOut({ redirectTo: "/" });
 }

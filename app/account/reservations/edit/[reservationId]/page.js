@@ -1,59 +1,121 @@
-
 import FormButton from "@/app/_components/FormButton";
 import { updateReservation } from "@/app/_lib/actions";
-import { getBooking, getCabin, updateBooking } from "@/app/_lib/data-service";
+import { getBooking, getCabin } from "@/app/_lib/data-service";
+import Link from "next/link";
 
+const label = {
+  fontFamily: "'IBM Plex Mono', monospace",
+  fontSize: "11px",
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+  color: "var(--stone)",
+  marginBottom: "8px",
+  display: "block",
+};
 
-export default async function Page({params}) {
-  
-    const reservationId = params.reservationId;
-    const {numGuests, cabinId, observations} = await getBooking(reservationId);
-    const {maxCapacity} = await getCabin(cabinId);
-  
-    return (
-      <div>
-        <h2 className="font-semibold text-2xl text-accent-400 mb-7">
-          Edit Reservation #{reservationId}
-        </h2>
-  
-        <form action={updateReservation} className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
-          <div className="space-y-2">
-            <label htmlFor="numGuests">How many guests?</label>
-            <select
-              name="numGuests"
-              id="numGuests"
-              className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-              required
-            >
-              <option value="" key="">
-                Select number of guests...
+export default async function Page({ params }) {
+  const reservationId = params.reservationId;
+  const { numGuests, cabinId, observations } = await getBooking(reservationId);
+  const { maxCapacity } = await getCabin(cabinId);
+
+  return (
+    <div style={{ padding: "8px 0 40px" }}>
+      {/* Back link */}
+      <Link
+        href="/account/reservations"
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: "11px",
+          color: "var(--stone)",
+          textDecoration: "none",
+          letterSpacing: "0.05em",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          marginBottom: "32px",
+          opacity: 0.7,
+        }}
+      >
+        &larr; Back to reservations
+      </Link>
+
+      <h2
+        style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontSize: "40px",
+          fontWeight: 600,
+          fontStyle: "italic",
+          color: "var(--birch)",
+          marginBottom: "6px",
+        }}
+      >
+        Edit Reservation
+      </h2>
+      <p
+        style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: "11px",
+          color: "var(--stone)",
+          marginBottom: "36px",
+          letterSpacing: "0.05em",
+        }}
+      >
+        #{reservationId}
+      </p>
+
+      <form
+        action={updateReservation}
+        style={{
+          background: "var(--deep)",
+          border: "1px solid var(--border)",
+          borderRadius: "6px",
+          padding: "40px 48px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "28px",
+        }}
+      >
+        <div>
+          <label htmlFor="numGuests" style={label}>
+            Number of guests
+          </label>
+          <select
+            name="numGuests"
+            id="numGuests"
+            defaultValue={numGuests}
+            className="input-dark"
+            required
+          >
+            <option value="">Select number of guests…</option>
+            {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
+              <option value={x} key={x}>
+                {x} {x === 1 ? "guest" : "guests"}
               </option>
-              {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
-                <option value={x} key={x}>
-                  {x} {x === 1 ? "guest" : "guests"}
-                </option>
-              ))}
-            </select>
-          </div>
-  
-          <div className="space-y-2">
-            <label htmlFor="observations">
-              Anything we should know about your stay?
-            </label>
-            <textarea
-              name="observations"
-              className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-            />
-          </div>
+            ))}
+          </select>
+        </div>
 
-          <div className="space-y-2">
-            <input type="hidden" name="reservationId" value={reservationId}></input>
-          </div>
-  
-          <div className="flex justify-end items-center gap-6">
-            <FormButton />
-          </div>
-        </form>
-      </div>
-    );
-  }
+        <div>
+          <label htmlFor="observations" style={label}>
+            Special requests / notes
+          </label>
+          <textarea
+            name="observations"
+            id="observations"
+            defaultValue={observations}
+            rows={5}
+            placeholder="Dietary requirements, accessibility needs, late arrival…"
+            className="input-dark"
+            style={{ resize: "vertical" }}
+          />
+        </div>
+
+        <input type="hidden" name="reservationId" value={reservationId} />
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <FormButton>Update reservation</FormButton>
+        </div>
+      </form>
+    </div>
+  );
+}

@@ -1,24 +1,41 @@
-import { getCountries } from '@/app/_lib/data-service';
-
-// Let's imagine your colleague already built this component 😃
+import { getCountries } from "@/app/_lib/data-service";
 
 async function SelectCountry({ defaultCountry, name, id, className }) {
   const countries = await getCountries();
   const flag =
-    countries.find((country) => country.name === defaultCountry)?.flag ?? '';
+    countries.find((country) => country.name === defaultCountry)?.flag ?? "";
 
   return (
     <select
       name={name}
       id={id}
-      // Here we use a trick to encode BOTH the country name and the flag into the value. Then we split them up again later in the server action
       defaultValue={`${defaultCountry}%${flag}`}
+      style={{
+        width: "100%",
+        background: "var(--moss)",
+        color: "var(--birch)",
+        border: "1px solid var(--border)",
+        borderRadius: "2px",
+        padding: "10px 14px",
+        fontFamily: "'Jost', sans-serif",
+        fontSize: "14px",
+        outline: "none",
+        transition: "border-color 200ms ease",
+        cursor: "pointer",
+        appearance: "auto",
+      }}
       className={className}
     >
-      <option value=''>Select country...</option>
+      <option value="" style={{ background: "var(--moss)" }}>
+        Select country...
+      </option>
       {countries.map((c) => (
-        <option key={c.name} value={`${c.name}%${c.flag}`}>
-          {c.name}
+        <option
+          key={c.name}
+          value={`${c.name}%${c.flag}`}
+          style={{ background: "var(--moss)" }}
+        >
+          {c.flag} {c.name}
         </option>
       ))}
     </select>
